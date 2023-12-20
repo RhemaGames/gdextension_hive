@@ -1,10 +1,6 @@
 #ifndef HIVE_H
 #define HIVE_H
 
-#include <iostream>
-#include <string>
-using namespace std;
-
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/classes/http_client.hpp>
 #include <godot_cpp/classes/http_request.hpp>
@@ -23,6 +19,7 @@ using namespace std;
 // Wallet headers for storing, retrieving and securing keys and other "owned" items from the chain
 
 #include "wallet/wallet.h"
+//using namespace hive_wallet;
 
 
 namespace godot {
@@ -42,7 +39,10 @@ namespace godot {
 			~HIVE();
 
 			void _process(double delta);
-			int post(string data);
+			int post(String data);
+			int authenticate(String account, String key);
+			void get_post_history(String account,int count);
+			void get_post(String account,String url);
 			
 		};
 	class HIVE_WALLET:public HIVE {
@@ -50,11 +50,10 @@ namespace godot {
 
 		private:
 			double time_passed;
-			struct {
-				string posting;
-				string active;
-				string memo;
-			} private_key;
+			double something;
+			String private_posting_key = "posting";
+			String private_active_key = "active";
+			String private_memo_key = "memo";
 
 		protected:
 			static void _bind_methods();
@@ -64,8 +63,12 @@ namespace godot {
 			~HIVE_WALLET();
 
 			void _process(double delta);
-			string get_private_key(int type);
-			bool set_private_key(int type,string key);
+			
+			String get_private_key(int type);
+			bool set_private_key(int type,String key);
+			String get_memos(String account,int count);
+			String get_transfers(String account,int count);
+			String get_wallet_info(String account);
 		};
 }
 

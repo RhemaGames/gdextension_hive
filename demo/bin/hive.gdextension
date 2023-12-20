@@ -5,8 +5,8 @@ compatibility_minimum = "4.1"
 
 [icons]
 
-Hive = "res://icons/hive.svg"
-Hive_Wallet = "res://icons/hive.svg"
+Hive = "res://bin/icons/hive.svg"
+Hive_Wallet = "res://bin/icons/hive.svg"
 
 [libraries]
 
