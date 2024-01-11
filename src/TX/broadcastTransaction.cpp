@@ -5,7 +5,7 @@
 #include <godot_cpp/classes/http_request.hpp>
 #include <godot_cpp/classes/crypto.hpp>
 #include <godot_cpp/classes/crypto_key.hpp>
-#include <openssl/ssl.h>
+//#include <openssl/ssl.h>
 
 
 /** Broadcast signed transaction */

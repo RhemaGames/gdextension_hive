@@ -6,3 +6,15 @@
 script = ExtResource("1_yte85")
 
 [node name="HIVE_WALLET" type="HIVE_WALLET" parent="."]
+
+[node name="HIVE" type="HIVE" parent="."]
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 335.0
+offset_bottom = 640.0
+grow_vertical = 2
+
+[connection signal="error" from="HIVE" to="." method="_on_hive_error"]
+[connection signal="recieved_profile" from="HIVE" to="." method="_on_hive_recieved_profile"]

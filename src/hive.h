@@ -6,19 +6,22 @@
 #include <godot_cpp/classes/http_request.hpp>
 #include <godot_cpp/classes/crypto.hpp>
 #include <godot_cpp/classes/crypto_key.hpp>
+#include <godot_cpp/classes/os.hpp>
+#include <godot_cpp/classes/json.hpp>
+#include <godot_cpp/classes/engine.hpp>
 
 // Transaction headers for sending data to the chain.
 #include "TX/signTransaction.h"
 #include "TX/broadcastTransaction.h"
 #include "TX/createTransaction.h"
 
-// Receieve header for retrieveing and processing data from the chain.
+// Reception headers for retrieving data from the chain.
+#include "RX/general_rx.h"
 
-//TBR
 
 // Wallet headers for storing, retrieving and securing keys and other "owned" items from the chain
 
-#include "wallet/wallet.h"
+//#include "wallet/wallet.h"
 //using namespace hive_wallet;
 
 
@@ -37,12 +40,17 @@ namespace godot {
 		public:
 			HIVE();
 			~HIVE();
-
+			String hive_node;
+			String hive_username;
 			void _process(double delta);
 			int post(String data);
 			int authenticate(String account, String key);
 			void get_post_history(String account,int count);
 			void get_post(String account,String url);
+			int get_profile(String account);
+			void set_hive_node(String p_hive_node);
+			String get_hive_node();
+			
 			
 		};
 	class HIVE_WALLET:public HIVE {
