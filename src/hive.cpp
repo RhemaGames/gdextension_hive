@@ -1,8 +1,7 @@
 #include "hive.h"
-#include <string>
-#include "wallet/wallet.h"
+#include "RX/general_rx.h"
+//#include "wallet/wallet.h"
 #include <godot_cpp/core/class_db.hpp>
-
 using namespace godot;
 
 void HIVE::_bind_methods() {
@@ -10,17 +9,22 @@ void HIVE::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("authenticate","account","key"), &HIVE::authenticate);
 	ClassDB::bind_method(D_METHOD("get_post_history","account","count"), &HIVE::get_post_history);
 	ClassDB::bind_method(D_METHOD("get_post","account","url"), &HIVE::get_post);
+	ClassDB::bind_method(D_METHOD("get_profile","account"), &HIVE::get_profile);
 	
+	ADD_SIGNAL(MethodInfo("recieved_profile",PropertyInfo(Variant::STRING, "json")));
 	ADD_SIGNAL(MethodInfo("recieved_post_history",PropertyInfo(Variant::STRING, "json")));
 	ADD_SIGNAL(MethodInfo("recieved_post",PropertyInfo(Variant::STRING, "json")));
 	ADD_SIGNAL(MethodInfo("published",PropertyInfo(Variant::STRING, "postId"), PropertyInfo(Variant::DICTIONARY, "data")));
 	ADD_SIGNAL(MethodInfo("error",PropertyInfo(Variant::INT, "type"), PropertyInfo(Variant::DICTIONARY, "data")));
+	
+	ClassDB::add_property("HIVE", PropertyInfo(Variant::STRING, "hive_node", PROPERTY_HINT_TYPE_STRING, "https://api.hive.blog"), "set_hive_node", "get_hive_node");
 	
 }
 
 HIVE::HIVE() {
 	// Initialize any variables here.
 	time_passed = 0.0;
+	hive_node = "";
 }
 
 HIVE::~HIVE() {
@@ -50,6 +54,35 @@ void HIVE::get_post(String account,String url) {
 
 }
 
+int HIVE::get_profile(String account) {
+	int error = 0;
+	Array enclosure;
+    Array params;
+    params.append(account);
+    enclosure.append(params);
+    
+    Dictionary fields;
+   	fields["jsonrpc"] ="2.0";
+    fields["method"] = "condenser_api.get_accounts";
+    fields["params"] = enclosure;
+    fields["id"] = 1;
+	if (hive_node == "") {
+		error = 1;
+		}
+	Dictionary data = get_from_hive(1,"https://api.hive.blog",443,fields,false);
+	emit_signal("recieved_profile",data);
+	
+return error;
+}
+
+
+void HIVE::set_hive_node(String p_hive_node) {
+	hive_node = p_hive_node;
+}
+
+String HIVE::get_hive_node() {
+	return hive_node;
+}
 
 
 void HIVE_WALLET::_bind_methods() {
