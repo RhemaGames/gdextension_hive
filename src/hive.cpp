@@ -7,16 +7,16 @@ using namespace godot;
 void HIVE::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("post","data"), &HIVE::post);
 	ClassDB::bind_method(D_METHOD("authenticate","account","key"), &HIVE::authenticate);
-	ClassDB::bind_method(D_METHOD("get_post_history","account","count"), &HIVE::get_post_history);
-	ClassDB::bind_method(D_METHOD("get_post","account","url"), &HIVE::get_post);
+	ClassDB::bind_method(D_METHOD("get_blog_history","account","start","count"), &HIVE::get_blog_history);
+	ClassDB::bind_method(D_METHOD("get_blog_entry","account","post"), &HIVE::get_blog_entry);
 	ClassDB::bind_method(D_METHOD("get_profile","account"), &HIVE::get_profile);
 	ClassDB::bind_method(D_METHOD("get_history","account","start","count"), &HIVE::get_history);
 	
 	ADD_SIGNAL(MethodInfo("recieved_profile",PropertyInfo(Variant::STRING, "json")));
 	ADD_SIGNAL(MethodInfo("recieved_history",PropertyInfo(Variant::STRING, "json")));
 	
-	ADD_SIGNAL(MethodInfo("recieved_post_history",PropertyInfo(Variant::STRING, "json")));
-	ADD_SIGNAL(MethodInfo("recieved_post",PropertyInfo(Variant::STRING, "json")));
+	ADD_SIGNAL(MethodInfo("recieved_blog_history",PropertyInfo(Variant::STRING, "json")));
+	ADD_SIGNAL(MethodInfo("recieved_blog_entry",PropertyInfo(Variant::STRING, "json")));
 	ADD_SIGNAL(MethodInfo("published",PropertyInfo(Variant::STRING, "postId"), PropertyInfo(Variant::DICTIONARY, "data")));
 	ADD_SIGNAL(MethodInfo("error",PropertyInfo(Variant::INT, "type"), PropertyInfo(Variant::DICTIONARY, "data")));
 	
@@ -49,12 +49,47 @@ int HIVE::authenticate(String account,String private_key) {
 return 1;
 }
 
-void HIVE::get_post_history(String account,int count) {
+int HIVE::get_blog_entry(String account,int post) {
+	int error = 0;
+    Array params;
+    params.append(account);
+    params.append(post);
+    params.append(1);
+    
+    Dictionary fields;
+   	fields["jsonrpc"] ="2.0";
+    fields["method"] = "condenser_api.get_blog";
+    fields["params"] = params;
+    fields["id"] = 1;
+	if (hive_node == "") {
+		error = 1;
+		}
+	Dictionary data = get_from_hive(3,"https://api.hive.blog",443,fields,false);
+	emit_signal("recieved_blog_entry",data);
 
+return error;
 }
 
-void HIVE::get_post(String account,String url) {
+int HIVE::get_blog_history(String account,int start,int count) {
 
+	int error = 0;
+    Array params;
+    params.append(account);
+    params.append(start);
+    params.append(count);
+    
+    Dictionary fields;
+   	fields["jsonrpc"] ="2.0";
+    fields["method"] = "condenser_api.get_blog_entries";
+    fields["params"] = params;
+    fields["id"] = 1;
+	if (hive_node == "") {
+		error = 1;
+		}
+	Dictionary data = get_from_hive(6,"https://api.hive.blog",443,fields,false);
+	emit_signal("recieved_blog_history",data);
+
+return error;
 }
 
 int HIVE::get_profile(String account) {
@@ -84,7 +119,7 @@ int HIVE::get_history(String account,int start,int count) {
 	//Array enclosure;
     Dictionary params;
     params["account"] = account;
-    params["start"] = -1;
+    params["start"] = start;
     params["limit"] = count;
    // enclosure.append(params);
     
@@ -96,11 +131,13 @@ int HIVE::get_history(String account,int start,int count) {
 	if (hive_node == "") {
 		error = 1;
 		}
-	Dictionary data = get_from_hive(6,"https://api.hive.blog",443,fields,false);
+	Dictionary data = get_from_hive(2,"https://api.hive.blog",443,fields,false);
 	emit_signal("recieved_history",data);
 
 return error;
 }
+
+
 
 
 void HIVE::set_hive_node(String p_hive_node) {

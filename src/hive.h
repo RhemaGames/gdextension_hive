@@ -45,8 +45,8 @@ namespace godot {
 			void _process(double delta);
 			int post(String data);
 			int authenticate(String account, String key);
-			void get_post_history(String account,int count);
-			void get_post(String account,String url);
+			int get_blog_history(String account,int start, int count);
+			int get_blog_entry(String account,int post);
 			int get_profile(String account);
 			void set_hive_node(String p_hive_node);
 			String get_hive_node();
