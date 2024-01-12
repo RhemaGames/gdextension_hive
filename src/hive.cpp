@@ -10,8 +10,11 @@ void HIVE::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_post_history","account","count"), &HIVE::get_post_history);
 	ClassDB::bind_method(D_METHOD("get_post","account","url"), &HIVE::get_post);
 	ClassDB::bind_method(D_METHOD("get_profile","account"), &HIVE::get_profile);
+	ClassDB::bind_method(D_METHOD("get_history","account","start","count"), &HIVE::get_history);
 	
 	ADD_SIGNAL(MethodInfo("recieved_profile",PropertyInfo(Variant::STRING, "json")));
+	ADD_SIGNAL(MethodInfo("recieved_history",PropertyInfo(Variant::STRING, "json")));
+	
 	ADD_SIGNAL(MethodInfo("recieved_post_history",PropertyInfo(Variant::STRING, "json")));
 	ADD_SIGNAL(MethodInfo("recieved_post",PropertyInfo(Variant::STRING, "json")));
 	ADD_SIGNAL(MethodInfo("published",PropertyInfo(Variant::STRING, "postId"), PropertyInfo(Variant::DICTIONARY, "data")));
@@ -72,6 +75,30 @@ int HIVE::get_profile(String account) {
 	Dictionary data = get_from_hive(1,"https://api.hive.blog",443,fields,false);
 	emit_signal("recieved_profile",data);
 	
+return error;
+}
+
+int HIVE::get_history(String account,int start,int count) {
+
+	int error = 0;
+	//Array enclosure;
+    Dictionary params;
+    params["account"] = account;
+    params["start"] = -1;
+    params["limit"] = count;
+   // enclosure.append(params);
+    
+    Dictionary fields;
+   	fields["jsonrpc"] ="2.0";
+    fields["method"] = "account_history_api.get_account_history";
+    fields["params"] = params;
+    fields["id"] = 1;
+	if (hive_node == "") {
+		error = 1;
+		}
+	Dictionary data = get_from_hive(6,"https://api.hive.blog",443,fields,false);
+	emit_signal("recieved_history",data);
+
 return error;
 }
 
