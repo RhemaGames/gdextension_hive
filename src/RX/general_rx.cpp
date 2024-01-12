@@ -21,6 +21,9 @@ int enumerate_output(String output) {
 	if (output.match("auth") == true) {
 		num = 5;
 	}
+	if (output == "history") {
+		num = 6;
+	}
 
 return num;
 }
@@ -123,6 +126,9 @@ Dictionary get_from_hive(int output,String url, int port, Dictionary fields, boo
 		//parse_age(parse_json(text))
 		
 		case 5:
+			return data;
+		
+		case 6:
 			return data;
 			
 		default:

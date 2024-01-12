@@ -50,6 +50,7 @@ namespace godot {
 			int get_profile(String account);
 			void set_hive_node(String p_hive_node);
 			String get_hive_node();
+			int get_history(String account,int start,int count);
 			
 			
 		};
