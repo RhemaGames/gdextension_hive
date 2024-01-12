@@ -34,12 +34,10 @@ Dictionary get_from_hive(int output,String url, int port, Dictionary fields, boo
     JSON json;
     Engine engine;
 
-	//String url = "https://api.hive.blog";
     int error = 0;
     Dictionary dict;
     Dictionary data;
     data["error"] = "not a valid type";
-    //emit_signal("error",0,data);
    
     http.set_blocking_mode(false);
     error = http.connect_to_host(url,port);
@@ -56,6 +54,7 @@ Dictionary get_from_hive(int output,String url, int port, Dictionary fields, boo
 	
     while (http.get_status() == HTTPClient::STATUS_CONNECTING or http.get_status() == 	HTTPClient::STATUS_RESOLVING) {
 		http.poll();
+		engine.get_main_loop();
 		//if (os.has_feature("web") != true) {
 		//	os.delay_msec(500);
 		//} else {
