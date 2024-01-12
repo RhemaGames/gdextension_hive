@@ -3,9 +3,6 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	#print($HIVE_WALLET.get_private_key(0))
-	#print($HIVE_WALLET.get_private_key(1))
-	#print($HIVE_WALLET.get_private_key(2))
 	
 	$HIVE.get_profile("bflanagin",true)
 	$HIVE.get_history("bflanagin",-1,1,true)

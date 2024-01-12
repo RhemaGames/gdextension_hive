@@ -39,7 +39,7 @@ Dictionary get_from_hive(int output,String url, int port, Dictionary fields, boo
     Dictionary data;
     data["error"] = "not a valid type";
    
-    http.set_blocking_mode(false);
+   // http.set_blocking_mode(false);
     error = http.connect_to_host(url,port);
     dict.clear();
     
