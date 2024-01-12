@@ -11,9 +11,11 @@ process_thread_group_order = 0
 process_thread_messages = 0
 
 [node name="HIVE" type="HIVE" parent="."]
+process_mode = 3
+process_priority = -1
 process_thread_group = 2
 process_thread_group_order = 0
-process_thread_messages = 0
+process_thread_messages = 1
 
 [node name="RichTextLabel" type="RichTextLabel" parent="."]
 offset_left = 3.0

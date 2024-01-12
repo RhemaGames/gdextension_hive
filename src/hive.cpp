@@ -1,5 +1,6 @@
 #include "hive.h"
 #include "RX/general_rx.h"
+#include "core/cache.h"
 //#include "wallet/wallet.h"
 #include <godot_cpp/core/class_db.hpp>
 using namespace godot;
@@ -8,9 +9,9 @@ void HIVE::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("post","data"), &HIVE::post);
 	ClassDB::bind_method(D_METHOD("authenticate","account","key"), &HIVE::authenticate);
 	ClassDB::bind_method(D_METHOD("get_blog_history","account","start","count"), &HIVE::get_blog_history);
-	ClassDB::bind_method(D_METHOD("get_blog_entry","account","post"), &HIVE::get_blog_entry);
-	ClassDB::bind_method(D_METHOD("get_profile","account"), &HIVE::get_profile);
-	ClassDB::bind_method(D_METHOD("get_history","account","start","count"), &HIVE::get_history);
+	ClassDB::bind_method(D_METHOD("get_blog_entry","account","post","use_cache"), &HIVE::get_blog_entry);
+	ClassDB::bind_method(D_METHOD("get_profile","account","use_cache"), &HIVE::get_profile);
+	ClassDB::bind_method(D_METHOD("get_history","account","start","count","use_cache"), &HIVE::get_history);
 	
 	ADD_SIGNAL(MethodInfo("recieved_profile",PropertyInfo(Variant::STRING, "json")));
 	ADD_SIGNAL(MethodInfo("recieved_history",PropertyInfo(Variant::STRING, "json")));
@@ -49,7 +50,7 @@ int HIVE::authenticate(String account,String private_key) {
 return 1;
 }
 
-int HIVE::get_blog_entry(String account,int post) {
+int HIVE::get_blog_entry(String account,int post, bool cache) {
 	int error = 0;
     Array params;
     params.append(account);
@@ -92,7 +93,7 @@ int HIVE::get_blog_history(String account,int start,int count) {
 return error;
 }
 
-int HIVE::get_profile(String account) {
+int HIVE::get_profile(String account,bool cache) {
 	int error = 0;
 	Array enclosure;
     Array params;
@@ -113,7 +114,7 @@ int HIVE::get_profile(String account) {
 return error;
 }
 
-int HIVE::get_history(String account,int start,int count) {
+int HIVE::get_history(String account,int start,int count,bool cache) {
 
 	int error = 0;
 	//Array enclosure;
