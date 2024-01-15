@@ -24,6 +24,9 @@ int enumerate_output(String output) {
 	if (output == "history") {
 		num = 6;
 	}
+	if(output == "img") {
+		num = 7;
+	}
 
 return num;
 }
@@ -35,26 +38,24 @@ Dictionary get_from_hive(int output,String url, int port, Dictionary fields, boo
     Engine engine;
 
     int error = 0;
-    Dictionary dict;
+    
     Dictionary data;
     data["error"] = "not a valid type";
-   
-   // http.set_blocking_mode(false);
+   	PackedByteArray rb;
+    http.set_blocking_mode(false);
     error = http.connect_to_host(url,port);
-    dict.clear();
-    
-    
+  
     if (debug == true) {
+    	Dictionary dict;
     	dict["errornum"] = error;
     	dict["error"] = "Connecting";
     	dict["connecting_to"] = url;
-   		//emit_signal("error",1,dict);
 		data["first step"] = dict;
 	}
 	
     while (http.get_status() == HTTPClient::STATUS_CONNECTING or http.get_status() == 	HTTPClient::STATUS_RESOLVING) {
 		http.poll();
-		engine.get_main_loop();
+		//engine.get_main_loop();
 		//if (os.has_feature("web") != true) {
 		//	os.delay_msec(500);
 		//} else {
@@ -70,6 +71,7 @@ Dictionary get_from_hive(int output,String url, int port, Dictionary fields, boo
     
     
     if (debug == true) {
+    	Dictionary dict;
     	dict["errornum"] = error;
     	dict["error"] = "request";
     	dict["connecting_to"] = url;
@@ -86,14 +88,14 @@ Dictionary get_from_hive(int output,String url, int port, Dictionary fields, boo
     	Dictionary headers = http.get_response_headers_as_dictionary();
     	
     	if (debug == true) {
+    		Dictionary dict;
     		dict["errornum"] = bl;
     		dict["error"] = "Repsonse length";
     		dict["connecting_to"] = url;
     		dict["fields"] = headers;
-   		//	emit_signal("error",4,dict);
    	    	data["third step"] = dict;
    	    }
-   		PackedByteArray rb;
+   		
    		
    		while (http.get_status() == HTTPClient::STATUS_BODY) {
             // While there is body left to be read
@@ -108,15 +110,30 @@ Dictionary get_from_hive(int output,String url, int port, Dictionary fields, boo
    			}
    		}
    		data.clear();
-   		data["recieved"] = json.parse_string(rb.get_string_from_ascii());
+   		//data["recieved"] = json.parse_string(rb.get_string_from_ascii());
+   		//data = rb;
 	}
 	switch(output) {
-		case 1: 
-			return data;
-			//parse_userinfo(parse_json(text))
-		case 2:
-			return data;
-			//parse_blog(parse_json(text))
+		case 1: {
+				data["received"] = json.parse_string(rb.get_string_from_ascii());
+				Dictionary rec = data["received"];
+				if (rec.has("result") == true) {
+					Array account = rec["result"];
+					return account[0];
+				} else {
+					return data;
+				}
+			}
+		case 2:{
+				data["received"] = json.parse_string(rb.get_string_from_ascii());
+				Dictionary rec = data["received"];
+				if (rec.has("result") == true) {
+					Dictionary history = rec["result"];
+					return history;
+				} else {
+					return data;
+				}
+			}
 		case 3:  
 			return data;
 		//parse_post(parse_json(text))
@@ -129,9 +146,133 @@ Dictionary get_from_hive(int output,String url, int port, Dictionary fields, boo
 		
 		case 6:
 			return data;
-			
+		
+		case 7:
+			data["received"] = rb;
+			return data;
+		
 		default:
+			data["received"] = rb;
 			return data;
 	};
 return data;
 }
+
+Dictionary get_from_web(String type,String url, int port, bool debug = false) {
+	HTTPClient http;
+    OS os;
+    JSON json;
+    Engine engine;
+    
+	Dictionary data;
+	
+	int error = 0;
+
+	String base_dir = url.get_base_dir();
+	String file = url.get_file();
+	Array split_url = url.split("/");
+	String mode = split_url[0];
+	String base_url = split_url[2];
+	String full_url = mode +"//"+base_url;
+	//data["base_url"] = base_url;
+	//data["base_dir"] = base_dir;
+	String full_path;
+	int url_size = split_url.size();
+	int i;
+	for(i = 3;i < url_size;i++) {
+		String t= split_url[i];
+		full_path += "/";
+		full_path += t;
+	}
+	data["file name"] = full_path;
+	
+	PackedByteArray rb;
+    http.set_blocking_mode(false);
+    error = http.connect_to_host(full_url,port);
+    
+     if (debug == true) {
+    	Dictionary dict;
+    	dict["errornum"] = error;
+    	dict["error"] = "Connecting";
+    	dict["connecting_to"] = full_url;
+    	dict["base_dir"] = base_dir;
+    	dict["full_path"] = full_path;
+    	dict["url_size"] = url_size;
+    	
+		data["first step"] = dict;
+	}
+	
+	while (http.get_status() == HTTPClient::STATUS_CONNECTING or http.get_status() == HTTPClient::STATUS_RESOLVING) {
+		http.poll();
+
+	}
+	
+	if (debug == true) {
+		Dictionary dict;
+		dict = data["first step"];
+		dict["status"] = http.get_status();
+		
+		data["first step"] = dict;
+	}
+	if (http.get_status() == HTTPClient::STATUS_CONNECTED) {
+	
+		Array headers;
+    	headers.append("User-Agent: Pirulo/1.0 (Godot)");
+    	headers.append("Accept: */*");
+    
+    	//String f = json.stringify(fields);
+    	error = http.request(HTTPClient::METHOD_GET,full_path,headers);
+    
+    	if (debug == true) {
+    		Dictionary dict;
+    		dict["errornum"] = error;
+    		dict["error"] = "Requesting";
+    		dict["connecting_to"] = url;
+    		dict["base"] = base_dir;
+    		dict["file"] = full_path;
+    	
+			data["second step"] = dict;
+		}
+		
+		 while (http.get_status() == HTTPClient::STATUS_REQUESTING) {
+        // Keep polling for as long as the request is being processed.
+		http.poll();
+		}
+		
+    	if (http.has_response() == true) {
+    		int bl = http.get_response_body_length();
+    		Dictionary headers = http.get_response_headers_as_dictionary();
+    	
+    		if (debug == true) {
+    			Dictionary dict;
+    			dict["errornum"] = bl;
+    			dict["error"] = "Repsonse length";
+    			dict["connecting_to"] = url;
+    			dict["fields"] = headers;
+   	    		data["third step"] = dict;
+   	   	 	}
+   		
+   			while (http.get_status() == HTTPClient::STATUS_BODY) {
+            	// While there is body left to be read
+				http.poll();
+				PackedByteArray chunk;
+				chunk = http.read_response_body_chunk(); // Get a chunk.
+				if (chunk.size() == 0) {
+                	// Got nothing, wait for buffers to fill a bit.
+					os.delay_usec(100);
+				} else {
+					rb = rb + chunk; // Append to read buffer.
+   				}
+   			}
+   			data["content-type"] = headers["Content-Type"];
+   			data["received"] = rb;
+   			//data["text"] = rb.get_string_from_ascii();
+   			
+		} 
+		
+	}
+	
+return data;
+}
+
+

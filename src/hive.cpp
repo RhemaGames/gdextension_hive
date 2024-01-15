@@ -12,12 +12,14 @@ void HIVE::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_blog_entry","account","post","use_cache"), &HIVE::get_blog_entry);
 	ClassDB::bind_method(D_METHOD("get_profile","account","use_cache"), &HIVE::get_profile);
 	ClassDB::bind_method(D_METHOD("get_history","account","start","count","use_cache"), &HIVE::get_history);
+	ClassDB::bind_method(D_METHOD("get_img","type","url","obj","use_cache"), &HIVE::get_img);
 	
-	ADD_SIGNAL(MethodInfo("recieved_profile",PropertyInfo(Variant::STRING, "json")));
-	ADD_SIGNAL(MethodInfo("recieved_history",PropertyInfo(Variant::STRING, "json")));
+	ADD_SIGNAL(MethodInfo("received_profile",PropertyInfo(Variant::STRING, "json")));
+	ADD_SIGNAL(MethodInfo("received_history",PropertyInfo(Variant::STRING, "json")));
+	ADD_SIGNAL(MethodInfo("received_blog_history",PropertyInfo(Variant::STRING, "json")));
+	ADD_SIGNAL(MethodInfo("received_blog_entry",PropertyInfo(Variant::STRING, "json")));
+	ADD_SIGNAL(MethodInfo("received_img",PropertyInfo(Variant::DICTIONARY,"data")));
 	
-	ADD_SIGNAL(MethodInfo("recieved_blog_history",PropertyInfo(Variant::STRING, "json")));
-	ADD_SIGNAL(MethodInfo("recieved_blog_entry",PropertyInfo(Variant::STRING, "json")));
 	ADD_SIGNAL(MethodInfo("published",PropertyInfo(Variant::STRING, "postId"), PropertyInfo(Variant::DICTIONARY, "data")));
 	ADD_SIGNAL(MethodInfo("error",PropertyInfo(Variant::INT, "type"), PropertyInfo(Variant::DICTIONARY, "data")));
 	
@@ -28,7 +30,7 @@ void HIVE::_bind_methods() {
 HIVE::HIVE() {
 	// Initialize any variables here.
 	time_passed = 0.0;
-	hive_node = "";
+	hive_node = "https://api.hive.blog";
 }
 
 HIVE::~HIVE() {
@@ -65,8 +67,8 @@ int HIVE::get_blog_entry(String account,int post, bool cache) {
 	if (hive_node == "") {
 		error = 1;
 		}
-	Dictionary data = get_from_hive(3,"https://api.hive.blog",443,fields,false);
-	emit_signal("recieved_blog_entry",data);
+	Dictionary data = get_from_hive(3,hive_node,443,fields,false);
+	emit_signal("received_blog_entry",data);
 
 return error;
 }
@@ -87,14 +89,15 @@ int HIVE::get_blog_history(String account,int start,int count) {
 	if (hive_node == "") {
 		error = 1;
 		}
-	Dictionary data = get_from_hive(6,"https://api.hive.blog",443,fields,false);
-	emit_signal("recieved_blog_history",data);
+	Dictionary data = get_from_hive(6,hive_node,443,fields,false);
+	emit_signal("received_blog_history",data);
 
 return error;
 }
 
-int HIVE::get_profile(String account,bool cache) {
-	int error = 0;
+Dictionary HIVE::get_profile(String account,bool cache) {
+	Dictionary error;
+	error["error"] = 0;
 	Array enclosure;
     Array params;
     params.append(account);
@@ -106,10 +109,17 @@ int HIVE::get_profile(String account,bool cache) {
     fields["params"] = enclosure;
     fields["id"] = 1;
 	if (hive_node == "") {
-		error = 1;
+		error["error"] = 1;
 		}
-	Dictionary data = get_from_hive(1,"https://api.hive.blog",443,fields,false);
-	emit_signal("recieved_profile",data);
+	if (cache == true) {
+		Array test;
+		test.append(account);
+		error["from cache"] = check_cache(2,test);
+	}
+	Dictionary data = get_from_hive(1,hive_node,443,fields,false);
+	//error["fields"] = fields;
+	//error["returned"] = data;
+	emit_signal("received_profile",data);
 	
 return error;
 }
@@ -132,13 +142,35 @@ int HIVE::get_history(String account,int start,int count,bool cache) {
 	if (hive_node == "") {
 		error = 1;
 		}
-	Dictionary data = get_from_hive(2,"https://api.hive.blog",443,fields,false);
-	emit_signal("recieved_history",data);
+	Dictionary data = get_from_hive(2,hive_node,443,fields,false);
+	emit_signal("received_history",data);
 
 return error;
 }
 
-
+Dictionary HIVE::get_img(String type,String url,String obj, bool cache) {
+	Dictionary fields;
+	Dictionary data;
+	Dictionary da = get_from_web(type,url,443,false);
+	Image img;
+	if (da["content-type"] == "image/png") {
+		img.load_png_from_buffer(da["received"]);
+	}	
+	if (da["content-type"] == "image/jpeg" or da["content-type"] == "image/jpeg") {
+		img.load_jpg_from_buffer(da["received"]);
+	}	
+	if (da["content-type"] == "image/webp") {
+		img.load_webp_from_buffer(da["received"]);
+	}
+	
+	data["content-type"] = da["content-type"];
+	data["received"] = &img;
+	data["type"] = type;
+	data["obj"] = obj;
+	emit_signal("received_img",data);
+	
+return data;
+}
 
 
 void HIVE::set_hive_node(String p_hive_node) {
