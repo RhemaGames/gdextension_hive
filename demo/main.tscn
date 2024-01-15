@@ -6,14 +6,8 @@
 script = ExtResource("1_yte85")
 
 [node name="HIVE_WALLET" type="HIVE_WALLET" parent="."]
-process_thread_group = 2
-process_thread_group_order = 0
-process_thread_messages = 0
 
 [node name="HIVE" type="HIVE" parent="."]
-process_thread_group = 2
-process_thread_group_order = 0
-process_thread_messages = 0
 
 [node name="RichTextLabel" type="RichTextLabel" parent="."]
 offset_left = 3.0
@@ -76,8 +70,27 @@ text = "Blog"
 custom_minimum_size = Vector2(0, 500)
 layout_mode = 2
 
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_left = 90.0
+offset_top = 61.0
+offset_right = 533.0
+offset_bottom = 375.0
+size_flags_horizontal = 4
+expand_mode = 5
+stretch_mode = 6
+
+[node name="TextureRect2" type="TextureRect" parent="."]
+offset_left = 537.0
+offset_top = 235.0
+offset_right = 980.0
+offset_bottom = 549.0
+size_flags_horizontal = 4
+expand_mode = 5
+stretch_mode = 6
+
 [connection signal="error" from="HIVE" to="." method="_on_hive_error"]
-[connection signal="recieved_blog_entry" from="HIVE" to="." method="_on_hive_recieved_blog_entry"]
-[connection signal="recieved_blog_history" from="HIVE" to="." method="_on_hive_recieved_blog_history"]
-[connection signal="recieved_history" from="HIVE" to="." method="_on_hive_recieved_history"]
-[connection signal="recieved_profile" from="HIVE" to="." method="_on_hive_recieved_profile"]
+[connection signal="received_blog_entry" from="HIVE" to="." method="_on_hive_received_blog_entry"]
+[connection signal="received_blog_history" from="HIVE" to="." method="_on_hive_received_blog_history"]
+[connection signal="received_history" from="HIVE" to="." method="_on_hive_received_history"]
+[connection signal="received_img" from="HIVE" to="." method="_on_hive_received_img"]
+[connection signal="received_profile" from="HIVE" to="." method="_on_hive_received_profile"]

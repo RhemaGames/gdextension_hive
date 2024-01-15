@@ -15,5 +15,7 @@
 
 godot::Dictionary get_from_hive(int output,godot::String url, int port, godot::Dictionary fields, bool debug);
 
+godot::Dictionary get_from_web(godot::String type, godot::String url, int port, bool debug);
+
 
 #endif
