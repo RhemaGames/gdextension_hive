@@ -1,6 +1,7 @@
 #include "hive.h"
 #include "RX/general_rx.h"
 #include "core/cache.h"
+#include "TX/signTransaction.h"
 //#include "wallet/wallet.h"
 #include <godot_cpp/core/class_db.hpp>
 using namespace godot;
@@ -31,6 +32,8 @@ HIVE::HIVE() {
 	// Initialize any variables here.
 	time_passed = 0.0;
 	hive_node = "https://api.hive.blog";
+  	chain_id = "beeab0de00000000000000000000000000000000000000000000000000000000";
+  	address_prefix = "STM";
 }
 
 HIVE::~HIVE() {
@@ -183,10 +186,21 @@ String HIVE::get_hive_node() {
 
 
 void HIVE_WALLET::_bind_methods() {
+	
+	// RX functions
 	ClassDB::bind_method(D_METHOD("get_private_key","type"), &HIVE_WALLET::get_private_key);
 	ClassDB::bind_method(D_METHOD("get_wallet_info","account"), &HIVE_WALLET::get_wallet_info);
 	ClassDB::bind_method(D_METHOD("get_transfers","account","count"), &HIVE_WALLET::get_transfers);
 	ClassDB::bind_method(D_METHOD("get_memos","account","count"), &HIVE_WALLET::get_memos);
+	
+	
+	//Lib Functions - remove after testing;!!!
+	ClassDB::bind_method(D_METHOD("sign","private_key","data"), &HIVE_WALLET::sign);
+	ClassDB::bind_method(D_METHOD("signature_check","private_key","data"), &HIVE_WALLET::signature_check);
+	
+	// TX Functions 
+	
+	
 	//ClassDB::bind_method(D_METHOD("set_private_key", "key","type"), &HIVE_WALLET::set_private_key);
 	//ClassDB::add_property("HIVE_WALLET", PropertyInfo(Variant::FLOAT,"something"), "get_private_key");
 	ADD_SIGNAL(MethodInfo("rewards_available", PropertyInfo(Variant::STRING, "type"), PropertyInfo(Variant::FLOAT, "amount")));
@@ -224,14 +238,35 @@ return key;
 } 
 
 String HIVE_WALLET::get_wallet_info(String account) {
+	String data = "not working yet";
 
+return data;
 }
 
 String HIVE_WALLET::get_transfers(String account, int count) {
+	String data = "not working yet";
 
+return data;
 }
-
 
 String HIVE_WALLET::get_memos(String account, int count) {
 
+	String data = "not working yet";
+
+return data;
+}
+
+String HIVE_WALLET::sign(String private_key,Dictionary data) {
+	String info;
+	info = create_signature(private_key,data,chain_id);
+
+return info;
+}
+
+
+bool HIVE_WALLET::signature_check(String public_key,Dictionary data) {
+	bool info;
+	info = check_signature(public_key,data);
+	
+return info;
 }
