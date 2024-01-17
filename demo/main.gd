@@ -7,9 +7,12 @@ func _ready():
 	print($HIVE.get_profile("bflanagin",true))
 	$HIVE.get_img("profile","https://files.steempeak.com/file/steempeak/bflanagin/zPoz0tPK-profile.png","TextureRect",true)
 	$HIVE.get_img("cover","https://files.steempeak.com/file/steempeak/bflanagin/RUeG6If9-DSC_0161.JPG","TextureRect2",true)
+	print($HIVE_WALLET.sign("123123125123123",{"test":"testing"}))
+	print($HIVE_WALLET.signature_check("43243234",{"test":"testing"}))
+	
 	#print($HIVE.get_profile("bflanagin",true))
-	#$HIVE.get_history("bflanagin",-1,10,true)
-	#$HIVE.get_blog_history("bflanagin",0,1)
+	$HIVE.get_history("bflanagin",-1,10,true)
+	#$HIVE.get_blog_history("bflanagin",0,10)
 	#$HIVE.call_deferred("get_blog_entry","bflanagin",336)
 	#$HTTPRequest.request("https://files.steempeak.com/file/steempeak/bflanagin/zPoz0tPK-profile.png")
 	
@@ -65,9 +68,10 @@ func _on_hive_received_history(json):
 func _on_hive_received_blog_history(json):
 	var box =  $TabContainer/Blog/VBoxContainer/RichTextLabel
 	box.append_text("\nFrom received blog history\n")
-	if json["received"].has("result"):
-		for p in json["received"]["result"]:
-			box.append_text("\n"+str(p))
+	if json.keys():
+		if json["received"].has("result"):
+			for p in json["received"]["result"]:
+				box.append_text("\n"+str(p))
 
 
 func _on_hive_received_blog_entry(json):

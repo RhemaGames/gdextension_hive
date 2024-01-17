@@ -54,6 +54,8 @@ namespace godot {
 			String get_hive_node();
 			int get_history(String account,int start,int count, bool cache = true);
 			Dictionary get_img(String type,String url,String obj, bool cache = true);
+			String chain_id;
+			String address_prefix;
 			
 			
 		};
@@ -81,6 +83,8 @@ namespace godot {
 			String get_memos(String account,int count);
 			String get_transfers(String account,int count);
 			String get_wallet_info(String account);
+			String sign(String private_key,Dictionary data);
+			bool signature_check(String public_key,Dictionary data);
 		};
 }
 
