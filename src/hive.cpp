@@ -7,6 +7,8 @@
 using namespace godot;
 
 void HIVE::_bind_methods() {
+
+	ClassDB::bind_method(D_METHOD("init"), &HIVE::init);
 	ClassDB::bind_method(D_METHOD("post","data"), &HIVE::post);
 	ClassDB::bind_method(D_METHOD("authenticate","account","key"), &HIVE::authenticate);
 	ClassDB::bind_method(D_METHOD("get_blog_history","account","start","count"), &HIVE::get_blog_history);
@@ -15,17 +17,22 @@ void HIVE::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_history","account","start","count","use_cache"), &HIVE::get_history);
 	ClassDB::bind_method(D_METHOD("get_img","type","url","obj","use_cache"), &HIVE::get_img);
 	
+	ClassDB::bind_method(D_METHOD("set_hive_node","node"), &HIVE::set_hive_node);
+	ClassDB::bind_method(D_METHOD("get_hive_node"), &HIVE::get_hive_node);
+	ClassDB::bind_method(D_METHOD("get_dynamic_globals"), &HIVE::get_globals);
+	
 	ADD_SIGNAL(MethodInfo("received_profile",PropertyInfo(Variant::STRING, "json")));
 	ADD_SIGNAL(MethodInfo("received_history",PropertyInfo(Variant::STRING, "json")));
 	ADD_SIGNAL(MethodInfo("received_blog_history",PropertyInfo(Variant::STRING, "json")));
 	ADD_SIGNAL(MethodInfo("received_blog_entry",PropertyInfo(Variant::STRING, "json")));
 	ADD_SIGNAL(MethodInfo("received_img",PropertyInfo(Variant::DICTIONARY,"data")));
+	ADD_SIGNAL(MethodInfo("tick", PropertyInfo(Variant::FLOAT,"time_passed")));
 	
 	ADD_SIGNAL(MethodInfo("published",PropertyInfo(Variant::STRING, "postId"), PropertyInfo(Variant::DICTIONARY, "data")));
 	ADD_SIGNAL(MethodInfo("error",PropertyInfo(Variant::INT, "type"), PropertyInfo(Variant::DICTIONARY, "data")));
 	
 	ClassDB::add_property("HIVE", PropertyInfo(Variant::STRING, "hive_node", PROPERTY_HINT_TYPE_STRING, "https://api.hive.blog"), "set_hive_node", "get_hive_node");
-	
+	ClassDB::add_property("hive_dynamic_globals",PropertyInfo(Variant::DICTIONARY, "globals"),"get_dynamic_globals","");
 }
 
 HIVE::HIVE() {
@@ -34,6 +41,7 @@ HIVE::HIVE() {
 	hive_node = "https://api.hive.blog";
   	chain_id = "beeab0de00000000000000000000000000000000000000000000000000000000";
   	address_prefix = "STM";
+  	globals = get_globals();
 }
 
 HIVE::~HIVE() {
@@ -42,7 +50,29 @@ HIVE::~HIVE() {
 
 void HIVE::_process(double delta) {
 	time_passed += delta;
+	emit_signal("tick",time_passed);
 }
+
+Dictionary HIVE::init() {
+globals = get_globals();
+return globals;
+}
+
+Dictionary HIVE::get_globals() {
+    Array params;
+
+    Dictionary fields;
+   	fields["jsonrpc"] ="2.0";
+    fields["method"] = "condenser_api.get_dynamic_global_properties";
+    fields["params"] = params;
+    fields["id"] = 1;
+
+    Dictionary results;
+    results = get_from_hive(20,hive_node,443,fields,false);
+    
+return results;
+}
+
 
 int HIVE::post(String data) {
 	//data = {"post":"tests"};

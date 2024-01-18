@@ -34,6 +34,7 @@ namespace godot {
 
 		private:
 			double time_passed;
+			Dictionary get_globals();
 			
 			
 		protected:
@@ -54,8 +55,11 @@ namespace godot {
 			String get_hive_node();
 			int get_history(String account,int start,int count, bool cache = true);
 			Dictionary get_img(String type,String url,String obj, bool cache = true);
+			Dictionary init();
 			String chain_id;
 			String address_prefix;
+			Dictionary globals;
+			
 			
 			
 		};
@@ -68,6 +72,7 @@ namespace godot {
 			String private_posting_key = "posting";
 			String private_active_key = "active";
 			String private_memo_key = "memo";
+		Dictionary get_globals();
 
 		protected:
 			static void _bind_methods();
