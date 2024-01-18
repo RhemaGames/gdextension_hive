@@ -3,7 +3,7 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	
+	$HIVE.init()
 	print($HIVE.get_profile("bflanagin",true))
 	$HIVE.get_img("profile","https://files.steempeak.com/file/steempeak/bflanagin/zPoz0tPK-profile.png","TextureRect",true)
 	$HIVE.get_img("cover","https://files.steempeak.com/file/steempeak/bflanagin/RUeG6If9-DSC_0161.JPG","TextureRect2",true)
@@ -89,6 +89,5 @@ func _on_hive_received_img(data):
 		if c.name == data["obj"]:
 			c.set_texture(TR)
 			break
-
 
 

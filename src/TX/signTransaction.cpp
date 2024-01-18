@@ -36,12 +36,12 @@ Dictionary transactionDigest(String transaction,String chain_id) {
    // Need to see if this needs to be created or if Godot already has the proper Serializer
    // Serializer.Transaction(buffer, transaction)
   
-  buffer.flip() //Switches from writing to reading mode Is this needed?
+  //buffer.flip() //Switches from writing to reading mode Is this needed?
   
-  const transactionData = Buffer.from(buffer.toBuffer())
-  const txId = sha256(transactionData).toString('hex').slice(0, 40)
-  const digest = sha256(Buffer.concat([chainId, transactionData]))
-  return { digest, txId }
+  //const transactionData = Buffer.from(buffer.toBuffer())
+  //const txId = sha256(transactionData).toString('hex').slice(0, 40)
+  //const digest = sha256(Buffer.concat([chainId, transactionData]))
+  //return { digest, txId }
 	
 	
 return digest;

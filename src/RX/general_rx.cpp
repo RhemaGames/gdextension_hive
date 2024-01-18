@@ -152,7 +152,7 @@ Dictionary get_from_hive(int output,String url, int port, Dictionary fields, boo
 			return data;
 		
 		default:
-			data["received"] = rb;
+			data["received"] = json.parse_string(rb.get_string_from_ascii());
 			return data;
 	};
 return data;
