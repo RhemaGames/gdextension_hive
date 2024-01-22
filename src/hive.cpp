@@ -21,6 +21,8 @@ void HIVE::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_hive_node"), &HIVE::get_hive_node);
 	ClassDB::bind_method(D_METHOD("get_dynamic_globals"), &HIVE::get_globals);
 	
+	ClassDB::bind_method(D_METHOD("test_transaction"), &HIVE::test_transaction);
+	
 	ADD_SIGNAL(MethodInfo("received_profile",PropertyInfo(Variant::STRING, "json")));
 	ADD_SIGNAL(MethodInfo("received_history",PropertyInfo(Variant::STRING, "json")));
 	ADD_SIGNAL(MethodInfo("received_blog_history",PropertyInfo(Variant::STRING, "json")));
@@ -206,6 +208,17 @@ return data;
 }
 
 
+Dictionary HIVE::test_transaction() {
+	Array operations;
+	 operations.append(vote("bflanagin","rhemagames","testing-things", 1000));
+	Dictionary trans;
+	trans = create_transaction(operations,"12312312");
+
+
+return trans;
+} 
+
+
 void HIVE::set_hive_node(String p_hive_node) {
 	hive_node = p_hive_node;
 }
@@ -213,6 +226,10 @@ void HIVE::set_hive_node(String p_hive_node) {
 String HIVE::get_hive_node() {
 	return hive_node;
 }
+
+
+
+
 
 
 void HIVE_WALLET::_bind_methods() {

@@ -3,12 +3,13 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$HIVE.init()
-	print($HIVE.get_profile("bflanagin",true))
+	#$HIVE.init()
+	print("test transactions ",$HIVE.test_transaction())
+	$HIVE.get_profile("bflanagin",true)
 	$HIVE.get_img("profile","https://files.steempeak.com/file/steempeak/bflanagin/zPoz0tPK-profile.png","TextureRect",true)
 	$HIVE.get_img("cover","https://files.steempeak.com/file/steempeak/bflanagin/RUeG6If9-DSC_0161.JPG","TextureRect2",true)
-	print($HIVE_WALLET.sign("123123125123123",{"test":"testing"}))
-	print($HIVE_WALLET.signature_check("43243234",{"test":"testing"}))
+	#print($HIVE_WALLET.sign("123123125123123",{"test":"testing"}))
+	#print($HIVE_WALLET.signature_check("43243234",{"test":"testing"}))
 	
 	#print($HIVE.get_profile("bflanagin",true))
 	$HIVE.get_history("bflanagin",-1,10,true)

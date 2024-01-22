@@ -1,73 +1,71 @@
-#ifndef GLOBALS_H
-#define GLOBALS_H
+#ifndef HIVE_OPS_H
+#define HIVE_OPS_H
 
-namespace hive { namespace protocol {
+#include <godot_cpp/core/class_db.hpp>
+using namespace godot;
 
-  /** NOTE: do not change the order of any operations prior to the virtual operations
-    * or it will trigger a hardfork.
-    */
-  typedef fc::static_variant<
-        vote_operation, // 0
-        comment_operation, // 1
+enum operation {
+	VOTE, // 0
+    COMMENT, // 1
 
-        transfer_operation, // 2
-        transfer_to_vesting_operation, // 3
-        withdraw_vesting_operation, // 4
+    TRANSFER, // 2
+    TRANSFER_TO_VESTING, // 3
+    WITHDRAW_VESTING, // 4
 
-        limit_order_create_operation, // 5
-        limit_order_cancel_operation, // 6
+    LIMIT_ORDER_CREATE, // 5
+    LIMIT_ORDER_CANCEL, // 6
 
-        feed_publish_operation, // 7
-        convert_operation, // 8
+    FEED_PUBLISH, // 7
+    CONVERT, // 8
 
-        account_create_operation, // 9
-        account_update_operation, // 10
+    ACCOUNT_CREATE, // 9
+    ACCOUNT_UPDATE, // 10
 
-        witness_update_operation, // 11
-        account_witness_vote_operation, // 12
-        account_witness_proxy_operation, // 13
+    WITNESS_UPDATE, // 11
+    ACCOUNT_WITNESS_VOTE, // 12
+    ACCOUNT_WITNESS_PROXY, // 13
 
-        pow_operation, // 14
+    POW, // 14
 
-        custom_operation, // 15
+    CUSTOM, // 15
 
-        witness_block_approve_operation, // 16
+    WITNESS_BLOCK_APPROVE, // 16
 
-        delete_comment_operation, // 17
-        custom_json_operation, // 18
-        comment_options_operation, // 19
-        set_withdraw_vesting_route_operation, // 20
-        limit_order_create2_operation, // 21
-        claim_account_operation, // 22
-        create_claimed_account_operation, // 23
-        request_account_recovery_operation, // 24
-        recover_account_operation, // 25
-        change_recovery_account_operation, // 26
-        escrow_transfer_operation, // 27
-        escrow_dispute_operation, // 28
-        escrow_release_operation, // 29
-        pow2_operation, // 30
-        escrow_approve_operation, // 31
-        transfer_to_savings_operation, // 32
-        transfer_from_savings_operation, // 33
-        cancel_transfer_from_savings_operation, // 34
-        custom_binary_operation, // 35
-        decline_voting_rights_operation, // 36
-        reset_account_operation, // 37
-        set_reset_account_operation, // 38
-        claim_reward_balance_operation, // 39
-        delegate_vesting_shares_operation, // 40
-        account_create_with_delegation_operation, // 41
-        witness_set_properties_operation, // 42
-        account_update2_operation, // 43
-        create_proposal_operation, // 44
-        update_proposal_votes_operation, // 45
-        remove_proposal_operation, // 46
-        update_proposal_operation, // 47
-        collateralized_convert_operation, // 48
-        recurrent_transfer_operation, // 49
+    DELETE_COMMENT, // 17
+    CUSTOM_JSON, // 18
+    COMMENT_OPTIONS, // 19
+    SET_WITHDRAW_VESTING_ROUTE, // 20
+    LIMIT_ORDER_CREATE2, // 21
+    CLAIM_ACCOUNT, // 22
+    CREATE_CLAIMED_ACCOUNT, // 23
+    REQUEST_ACCOUNT_RECOVERY, // 24
+    RECOVER_ACCOUNT, // 25
+    CHANGE_RECOVERY_ACCOUNT, // 26
+    ESCROW_TRANSFER, // 27
+    ESCROW_DISPUTE, // 28
+    ESCROW_RELEASE, // 29
+    POW2, // 30
+    ESCROW_APPROVE, // 31
+    TRANSFER_TO_SAVINGS, // 32
+    TRANSFER_FROM_SAVINGS, // 33
+    CANCEL_TRANSFER_FROM_SAVINGS, // 34
+    CUSTOM_BINARY, // 35
+    DECLINE_VOTING_RIGHTS, // 36
+    RESET_ACCOUNT, // 37
+    SET_RESET_ACCOUNT, // 38
+    CLAIM_REWARD_BALANCE, // 39
+    DELEGATE_VESTING_SHARES, // 40
+    ACCOUNT_CREATE_WITH_DELEGATION, // 41
+    WITNESS_SET_PROPERTIES, // 42
+    ACCOUNT_UPDATE2, // 43
+    CREATE_PROPOSAL, // 44
+    UPDATE_PROPOSAL_VOTES, // 45
+    REMOVE_PROPOSAL, // 46
+    UPDATE_PROPOSAL, // 47
+    COLLATERALIZED_CONVERT, // 48
+    RECURRENT_TRANSFER // 49
 
-#ifdef HIVE_ENABLE_SMT
+/*#ifdef HIVE_ENABLE_SMT
         /// SMT operations
         claim_reward_balance2_operation, // last_pre_smt + 1
 
@@ -123,25 +121,19 @@ namespace hive { namespace protocol {
         escrow_rejected_operation, //last_regular + 41
         proxy_cleared_operation, //last_regular + 42
         declined_voting_rights_operation //last_regular + 43
-      > operation;
+*/
 
-  /*void operation_get_required_authorities( const operation& op,
-                              flat_set<string>& active,
-                              flat_set<string>& owner,
-                              flat_set<string>& posting,
-                              flat_set<string>& witness,
-                              vector<authority>&  other );
+};
 
-  void operation_validate( const operation& op );*/
+Dictionary vote(String account,String author, String permlink, int weight);
+Dictionary vote2(String account,String author, String permlink, int weight);
 
-  bool is_market_operation( const operation& op );
+Dictionary comment(String parent_author, String parent_permlink, String author, String permlink, String title, String body, Dictionary json_metadata);
+Dictionary custom_json(Array required_auths, String reqired_posting_auths, String id, Dictionary json);
 
-  bool is_virtual_operation( const operation& op );
 
-  bool is_effective_operation( const operation& op );
 
-} } // hive::protocol
 
-}
+
 
 #endif

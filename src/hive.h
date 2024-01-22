@@ -15,6 +15,7 @@
 #include "TX/signTransaction.h"
 #include "TX/broadcastTransaction.h"
 #include "TX/createTransaction.h"
+#include "TX/hive_operations.h"
 
 // Reception headers for retrieving data from the chain.
 #include "RX/general_rx.h"
@@ -34,7 +35,7 @@ namespace godot {
 
 		private:
 			double time_passed;
-			Dictionary get_globals();
+			//Dictionary get_globals();
 			
 			
 		protected:
@@ -58,7 +59,10 @@ namespace godot {
 			Dictionary init();
 			String chain_id;
 			String address_prefix;
+			Dictionary get_globals();
 			Dictionary globals;
+			
+			Dictionary test_transaction();
 			
 			
 			
@@ -72,7 +76,7 @@ namespace godot {
 			String private_posting_key = "posting";
 			String private_active_key = "active";
 			String private_memo_key = "memo";
-		Dictionary get_globals();
+			
 
 		protected:
 			static void _bind_methods();
