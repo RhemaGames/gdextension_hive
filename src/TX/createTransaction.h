@@ -19,7 +19,8 @@ using namespace godot;
 
 
 Dictionary create_transaction(Array operations,String expr_date);
-PackedByteArray serializer(Dictionary transaction);
+String serializer(Dictionary transaction);
+
 
 
 

@@ -4,67 +4,8 @@
 #include <godot_cpp/core/class_db.hpp>
 using namespace godot;
 
-enum operation {
-	VOTE, // 0
-    COMMENT, // 1
 
-    TRANSFER, // 2
-    TRANSFER_TO_VESTING, // 3
-    WITHDRAW_VESTING, // 4
-
-    LIMIT_ORDER_CREATE, // 5
-    LIMIT_ORDER_CANCEL, // 6
-
-    FEED_PUBLISH, // 7
-    CONVERT, // 8
-
-    ACCOUNT_CREATE, // 9
-    ACCOUNT_UPDATE, // 10
-
-    WITNESS_UPDATE, // 11
-    ACCOUNT_WITNESS_VOTE, // 12
-    ACCOUNT_WITNESS_PROXY, // 13
-
-    POW, // 14
-
-    CUSTOM, // 15
-
-    WITNESS_BLOCK_APPROVE, // 16
-
-    DELETE_COMMENT, // 17
-    CUSTOM_JSON, // 18
-    COMMENT_OPTIONS, // 19
-    SET_WITHDRAW_VESTING_ROUTE, // 20
-    LIMIT_ORDER_CREATE2, // 21
-    CLAIM_ACCOUNT, // 22
-    CREATE_CLAIMED_ACCOUNT, // 23
-    REQUEST_ACCOUNT_RECOVERY, // 24
-    RECOVER_ACCOUNT, // 25
-    CHANGE_RECOVERY_ACCOUNT, // 26
-    ESCROW_TRANSFER, // 27
-    ESCROW_DISPUTE, // 28
-    ESCROW_RELEASE, // 29
-    POW2, // 30
-    ESCROW_APPROVE, // 31
-    TRANSFER_TO_SAVINGS, // 32
-    TRANSFER_FROM_SAVINGS, // 33
-    CANCEL_TRANSFER_FROM_SAVINGS, // 34
-    CUSTOM_BINARY, // 35
-    DECLINE_VOTING_RIGHTS, // 36
-    RESET_ACCOUNT, // 37
-    SET_RESET_ACCOUNT, // 38
-    CLAIM_REWARD_BALANCE, // 39
-    DELEGATE_VESTING_SHARES, // 40
-    ACCOUNT_CREATE_WITH_DELEGATION, // 41
-    WITNESS_SET_PROPERTIES, // 42
-    ACCOUNT_UPDATE2, // 43
-    CREATE_PROPOSAL, // 44
-    UPDATE_PROPOSAL_VOTES, // 45
-    REMOVE_PROPOSAL, // 46
-    UPDATE_PROPOSAL, // 47
-    COLLATERALIZED_CONVERT, // 48
-    RECURRENT_TRANSFER // 49
-
+	
 /*#ifdef HIVE_ENABLE_SMT
         /// SMT operations
         claim_reward_balance2_operation, // last_pre_smt + 1
@@ -121,16 +62,18 @@ enum operation {
         escrow_rejected_operation, //last_regular + 41
         proxy_cleared_operation, //last_regular + 42
         declined_voting_rights_operation //last_regular + 43
-*/
-
-};
+*/	
 
 Dictionary vote(String account,String author, String permlink, int weight);
 Dictionary vote2(String account,String author, String permlink, int weight);
 
+String vote_serialized(Dictionary operation);
+
 Dictionary comment(String parent_author, String parent_permlink, String author, String permlink, String title, String body, Dictionary json_metadata);
 Dictionary custom_json(Array required_auths, String reqired_posting_auths, String id, Dictionary json);
+int get_operation(String t);
 
+String reendian(String hex);
 
 
 

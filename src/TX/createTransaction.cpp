@@ -84,50 +84,82 @@ Dictionary create_transaction(Array operations, String expr_date) {
 		amount["nai"] = "@@000000021";
 	
 	Dictionary ttvo;
-		ttvo["from"] = "alice";
-        ttvo["to"] = "bob";
-        ttvo["amount"] = amount;
+		ttvo["author"] = "xeroc";
+        ttvo["permlink"] = "piston";
+        ttvo["voter"] = "xeroc";
+        ttvo["weight"] = 10000;	
+       // ttvo["amount"] = amount;
 	
-	Dictionary test_operation;
-         test_operation["type"] = "transfer_to_vesting_operation",
-         test_operation["value"] = ttvo;
+	Array test_operation;
+         test_operation.append("vote"),
+         test_operation.append(ttvo);
       
 	Array test_operations;
 		test_operations.append(test_operation);
+		//test_operations.append(test_operation);
 	
 	Dictionary transaction;
-		transaction["ref_block_num"] = 20;
-		transaction["ref_block_prefix"] = 2890012981;
-		transaction["experation"] = "2018-10-15T19:52:09";
+		transaction["ref_block_num"] = 36029;
+		transaction["ref_block_prefix"] = 1164960351;
+		transaction["experation"] = "2016-08-08T12:24:17";
 		transaction["operations"] = test_operations;
 		transaction["extensions"] = extensions;
-		
 	
-	PackedByteArray seal = serializer(transaction);
-	Dictionary test;
-	test["serial"] = seal;
+	String seal = serializer(transaction);
+	//Dictionary test;
+	//test["serial"] = seal;
+	transaction["signatures"] = seal;
 
 return transaction;
 }
 
-PackedByteArray serializer(Dictionary transaction) {
+String serializer(Dictionary transaction) {
 
-	Array opts;
-	opts.append(transaction["ref_block_num"]);
-	opts.append(transaction["ref_block_prefix"]);
-	opts.append(transaction["experation"]);
-	opts.append(1);
-	opts.append(0);
-	opts.append(0);
-	opts.append(transaction["extensions"]);
+	String serialized;
 	
-	PackedByteArray serialized = opts;
+	// Ref block Num
+	String rbf;
+	rbf = String().num_uint64(transaction["ref_block_num"],16,false);
+	serialized += reendian(rbf);
+	
+	// Ref block prefix
+	String rbp;
+	rbp = String().num_uint64(transaction["ref_block_prefix"],16,false);
+	serialized += reendian(rbp);
+	
+	// Experation Date
+	
+	Time expr;
+	int to_number = expr.get_unix_time_from_datetime_string(transaction["experation"]);
+	String ed;
+	ed = String().num_uint64(to_number,16,false);
+	serialized += reendian(ed);
+	
+	// Operations
+	int num_of_operations;
+		num_of_operations = Array(transaction["operations"]).size();
+	String hexed_num_of_operations;
+		hexed_num_of_operations = String().num_uint64(num_of_operations,16,false).pad_zeros(2);
+	serialized +=hexed_num_of_operations;
+	// - Operation id
+	String opt_type = Array(Array(transaction["operations"])[0])[0];
+	int opt = get_operation(opt_type);
+	serialized += String().num_uint64(opt,16,false).pad_zeros(2);
+	Dictionary ope = Array(Array(transaction["operations"])[0])[1];			
+	serialized += vote_serialized(ope);
+	
+	int num_of_exten;
+	 num_of_exten = Array(transaction["extensions"]).size();
+	String hex_num_of_exten;
+	hex_num_of_exten = String().num_uint64(num_of_exten,16,false).pad_zeros(2);
+	serialized += hex_num_of_exten;
+	/*
+	//PackedByteArray serialized = opts;
 	//serialized.encode_u16(0,transaction["ref_block_num"]);
-	
+	*/
 	
 	
 return serialized;
 }
-
 
 

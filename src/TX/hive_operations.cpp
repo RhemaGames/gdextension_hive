@@ -1,5 +1,173 @@
+#include "./hive_operations.h"
+
 #include <godot_cpp/core/class_db.hpp>
 using namespace godot;
+
+
+
+int get_operation(String t) {
+	String type = t.to_upper();
+	if (type == "VOTE" ) { // 0
+		return 0;
+	}		
+    if (type == "COMMENT" ) { // 1
+		return 0;
+	}	
+    if (type == "TRANSFER" ) { // 2
+    	return 2;
+	}	
+    if (type == "TRANSFER_TO_VESTING" ) { // 3
+    	return 3;
+	}	
+    if (type == "WITHDRAW_VESTING" ) { // 4
+    	return 4;
+	}	
+
+    if (type == "LIMIT_ORDER_CREATE" ) { // 5
+    	return 5;
+	}	
+    if (type == "LIMIT_ORDER_CANCEL" ) { // 6
+    	return 6;
+	}	
+
+    if (type == "FEED_PUBLISH" ) { // 7
+    	return 7;
+	}	
+    if (type == "CONVERT" ) { // 8
+    	return 8;
+	}	
+
+    if (type == "ACCOUNT_CREATE" ) { // 9
+    	return 9;
+	}	
+    if (type == "ACCOUNT_UPDATE" ) { // 10
+    	return 10;
+	}	
+
+   if (type == "WITNESS_UPDATE" ) { // 11
+   	return 11;
+	}	
+   if (type == "ACCOUNT_WITNESS_VOTE" ) { // 12
+   	return 12;
+	}	
+   if (type == "ACCOUNT_WITNESS_PROXY" ) { // 13
+   	return 13;
+	}	
+
+   if (type == "POW" ) { // 14
+   	return 14;
+	}	
+
+    if (type == "CUSTOM" ) { // 15
+    	return 15;
+	}	
+
+    if (type == "WITNESS_BLOCK_APPROVE" ) { // 16
+    	return 16;
+	}	
+
+    if (type == "DELETE_COMMENT" ) { // 17
+    	return 17;
+	}	
+    if (type == "CUSTOM_JSON" ) { // 18
+    	return 18;
+	}	
+    if (type == "COMMENT_OPTIONS" ) { // 19
+    	return 19;
+	}	
+    if (type == "SET_WITHDRAW_VESTING_ROUTE" ) { // 20
+    	return 20;
+	}	
+    if (type == "LIMIT_ORDER_CREATE2" ) { // 21
+    	return 21;
+	}	
+    if (type == "CLAIM_ACCOUNT" ) { // 22
+    	return 22;
+	}	
+    if (type == "CREATE_CLAIMED_ACCOUNT" ) { // 23
+    	return 23;
+	}	
+    if (type == "REQUEST_ACCOUNT_RECOVERY" ) { // 24
+    	return 24;
+	}	
+   if (type == "RECOVER_ACCOUNT" ) { // 25
+   	return 25;
+	}	
+    if (type == "CHANGE_RECOVERY_ACCOUNT" ) { // 26
+    	return 26;
+	}	
+    if (type == "ESCROW_TRANSFER" ) { // 27
+    	return 27;
+	}	
+    if (type == "ESCROW_DISPUTE" ) { // 28
+    	return 28;
+	}	
+    if (type == "ESCROW_RELEASE" ) { // 29
+    	return 29;
+	}	
+    if (type == "POW2" ) { // 30
+    	return 30;
+	}	
+    if (type == "ESCROW_APPROVE" ) { // 31
+    	return 31;
+	}	
+    if (type == "TRANSFER_TO_SAVINGS" ) { // 32
+    	return 32;
+	}	
+    if (type == "TRANSFER_FROM_SAVINGS" ) { // 33
+    	return 33;
+	}	
+    if (type == "CANCEL_TRANSFER_FROM_SAVINGS" ) { // 34
+    	return 34;
+	}	
+    if (type == "CUSTOM_BINARY" ) { // 35
+    	return 35;
+	}	
+    if (type == "DECLINE_VOTING_RIGHTS" ) { // 36
+    	return 36;
+	}	
+    if (type == "RESET_ACCOUNT" ) { // 37
+    	return 37;
+	}	
+    if (type == "SET_RESET_ACCOUNT" ) { // 38
+    	return 38;
+	}	
+    if (type == "CLAIM_REWARD_BALANCE" ) { // 39
+    	return 39;
+	}	
+    if (type == "DELEGATE_VESTING_SHARES" ) { // 40
+    	return 40;
+	}	
+    if (type == "ACCOUNT_CREATE_WITH_DELEGATION" ) { // 41
+    	return 41;
+	}	
+    if (type == "WITNESS_SET_PROPERTIES" ) { // 42
+    	return 42;
+	}	
+    if (type == "ACCOUNT_UPDATE2" ) { // 43
+    	return 43;
+	}	
+    if (type == "CREATE_PROPOSAL" ) { // 44
+    	return 44;
+	}	
+    if (type == "UPDATE_PROPOSAL_VOTES" ) { // 45
+    	return 45;
+	}	
+    if (type == "REMOVE_PROPOSAL" ) { // 46
+    	return 46;
+	}	
+    if (type == "UPDATE_PROPOSAL" ) { // 47
+    	return 47;
+	}	
+    if (type == "COLLATERALIZED_CONVERT" ) { // 48
+    	return 48;
+	}	
+    if (type == "RECURRENT_TRANSFER" ) { // 49
+    	return 49;
+	}	
+return -1;	
+}
+
 
 Dictionary vote(String account,String author, String permlink, int weight) {
 
@@ -13,6 +181,32 @@ Dictionary vote(String account,String author, String permlink, int weight) {
 	transaction["vote"] = data1;
 
 return transaction;
+}
+
+String vote_serialized(Dictionary operation) {
+	String serialized;
+	
+	String voter = operation["voter"];
+	String voter_length =  String().num_uint64(voter.length(),16,false).pad_zeros(2);
+	serialized +=voter_length;
+	serialized += voter.to_utf8_buffer().hex_encode();
+	
+	String author = operation["author"];
+	String author_length =  String().num_uint64(author.length(),16,false).pad_zeros(2);
+	serialized += author_length;
+	serialized += author.to_utf8_buffer().hex_encode();
+	
+	String permlink = operation["permlink"];
+	String permlink_length =  String().num_uint64(permlink.length(),16,false).pad_zeros(2);
+	serialized += permlink_length;
+	serialized += permlink.to_utf8_buffer().hex_encode();
+	
+	short weight = operation["weight"];
+
+	serialized += reendian(String().num_int64(weight,16,false));
+
+
+return serialized; 
 }
 
 Dictionary vote2(String account,String author, String permlink, int weight) {
@@ -111,4 +305,25 @@ Dictionary custom(Array required_auths,int id,String data) {
   transaction["custom"] =  data1;
   
 return transaction;
+}
+
+
+String reendian(String hex) {
+	Array p_dhex;
+	String dhex;
+	if (hex.is_valid_hex_number() == true) {
+			int offset;
+			int hex_length = hex.length();
+			for(offset = 0;offset < hex_length ;offset += 2) {
+				String subby = hex.substr(offset,2);
+				p_dhex.append(subby);
+				}
+			int i;
+			p_dhex.reverse();
+			for(i = 0;i < p_dhex.size(); i++) {
+				dhex += String(p_dhex[i]);
+			}
+	}
+return dhex;
+
 }
