@@ -35,3 +35,10 @@ web.debug.wasm32 = "res://bin/libhive.web.template_debug.wasm32.wasm"
 
 
 [dependencies]
+
+linux.debug.x86_64 = {
+
+    "res://bin/libbase58.so": "",
+    "res://bin/libsecp256k1.so": ""
+    
+}

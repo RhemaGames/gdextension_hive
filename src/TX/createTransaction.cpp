@@ -2,6 +2,7 @@
 #include "createTransaction.h"
 #include "../hive.h"
 #include "hive_operations.h"
+#include "signTransaction.h"
 
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/classes/http_client.hpp>
@@ -99,16 +100,30 @@ Dictionary create_transaction(Array operations, String expr_date) {
 		//test_operations.append(test_operation);
 	
 	Dictionary transaction;
-		transaction["ref_block_num"] = 36029;
-		transaction["ref_block_prefix"] = 1164960351;
-		transaction["experation"] = "2016-08-08T12:24:17";
+		transaction["ref_block_num"] = 61828;
+		transaction["ref_block_prefix"] = 3564338418;
+		transaction["experation"] = "2016-08-09T10:06:15";
 		transaction["operations"] = test_operations;
 		transaction["extensions"] = extensions;
 	
+	String chainId;
+        for (int i = 0; i < 256/4; i++) {
+            chainId += "0";
+        }
+	
+	Array wifs;
+	wifs.append("5JRaypasxMx1L97ZUX7YuC5Psb5EAbF821kkAGtBj7xCJFQcbLg");
+	String privatekey;
+	for (int i = 0;i < wifs.size(); i++) {
+	    privatekey += wif_decode(wifs[0]);
+	}
+	
 	String seal = serializer(transaction);
-	//Dictionary test;
-	//test["serial"] = seal;
-	transaction["signatures"] = seal;
+	Dictionary container;
+	container["serialized"] = seal;
+	container["digest"] = transactionDigest(seal,chainId);
+	container["privatekey"] = privatekey;
+	transaction["signatures"] = container;
 
 return transaction;
 }

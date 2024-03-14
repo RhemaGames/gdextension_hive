@@ -90,7 +90,6 @@ size_flags_horizontal = 4
 expand_mode = 5
 stretch_mode = 6
 
-[connection signal="error" from="HIVE" to="." method="_on_hive_error"]
 [connection signal="received_blog_entry" from="HIVE" to="." method="_on_hive_received_blog_entry"]
 [connection signal="received_blog_history" from="HIVE" to="." method="_on_hive_received_blog_history"]
 [connection signal="received_history" from="HIVE" to="." method="_on_hive_received_history"]

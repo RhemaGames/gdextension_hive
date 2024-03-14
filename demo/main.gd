@@ -4,7 +4,11 @@ extends Node2D
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	#$HIVE.init()
+	
+	var test = "Cat"
+	
 	print("test transactions ",$HIVE.test_transaction())
+	#print("test transactions ",$HIVE.test_transaction())
 	#$HIVE.get_profile("bflanagin",true)
 	#$HIVE.get_img("profile","https://files.steempeak.com/file/steempeak/bflanagin/zPoz0tPK-profile.png","TextureRect",true)
 	#$HIVE.get_img("cover","https://files.steempeak.com/file/steempeak/bflanagin/RUeG6If9-DSC_0161.JPG","TextureRect2",true)
@@ -37,6 +41,7 @@ func _on_hive_error(type, data):
 
 
 func _on_hive_received_profile(json):
+	#print_debug(json)
 	var box = $TabContainer/Profile/VBoxContainer/RichTextLabel
 	box.append_text("\nFrom received profile\n")
 	#box.append_text(str(json.keys()))
@@ -58,6 +63,7 @@ func _on_hive_received_profile(json):
 
 
 func _on_hive_received_history(json):
+	#print_debug(json)
 	var box =  $TabContainer/History/VBoxContainer/RichTextLabel
 	box.append_text("\nFrom received history\n")
 	#box.append_text(str(json))
@@ -67,6 +73,7 @@ func _on_hive_received_history(json):
 
 
 func _on_hive_received_blog_history(json):
+	#print_debug(json)
 	var box =  $TabContainer/Blog/VBoxContainer/RichTextLabel
 	box.append_text("\nFrom received blog history\n")
 	if json.keys():
